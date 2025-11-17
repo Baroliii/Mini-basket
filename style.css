@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #121212;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+/* MENU */
+#menu {
+    text-align: center;
+    margin-top: 100px;
+}
+#menu button {
+    padding: 12px 24px;
+    margin-top: 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* GAME UI */
+#game { display: none; }
+
+#scoreUI {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 32px;
+    z-index: 20;
+}
+
+#highscoreUI {
+    position: absolute;
+    top: 65px;
+    left: 20px;
+    opacity: 0.6;
+    font-size: 20px;
+}
+
+#player {
+    position: absolute;
+    bottom: 50px;
+    left: 40px;
+    width: 150px;
+    height: 200px;
+    background: url('assets/player.png') no-repeat center/contain;
+    pointer-events: none;
+}
+
+#hoop {
+    position: absolute;
+    width: 150px;
+    height: 20px;
+    border-bottom: 8px solid orange;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    transform: perspective(70px) rotateX(35deg);
+    top: 150px;
+}
+
+/* Ball skins */
+#ball {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    bottom: 50px;
+    left: 100px;
+}
+
+.ball-orange {
+    background: radial-gradient(circle at 30% 30%, #ff9933, #cc6600);
+}
+
+.ball-blue {
+    background: radial-gradient(circle, #33ccff, #006699);
+}
+
+.ball-gold {
+    background: radial-gradient(circle, gold, goldenrod);
+}
+
+.ball-fire {
+    background: radial-gradient(circle, #ff6600, #cc0000);
+    box-shadow: 0 0 20px 10px orange;
+}
+
+/* Particles */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: yellow;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.8;
+}
