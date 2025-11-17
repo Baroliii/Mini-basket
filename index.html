@@ -1,343 +1,146 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Clash Royale — Lite (All features, single file)</title>
+<meta charset="UTF-8" />
+<title>Mini Basketball Game</title>
 <style>
-/*
-Clash Royale — Lite (single-file)
-Features included in this file (all original, no copyrighted assets):
-- Drag-to-place card deployment with placement preview
-- Projectile system for ranged units with travel time and hit effects
-- Card rotation: 4 cards in hand + next queue
-- Improved AI that defends and attacks, chooses lanes
-- Bridge-based simple pathing (units prefer bridges to cross river)
-- Refined original visual style (shapes, gradients) and banners
-- Win/Lose UI banner
+    body {
+        margin: 0;
+        background: #222;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-align: center;
+    }
 
-Save this as index.html and open in a modern browser.
-*/
-:root{--bg:#071029;--panel:#0b1220;--accent:#06b6d4;--friendly:#7ee787;--enemy:#fda4af}
-html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:var(--bg);color:#e6eef6}
-.wrap{max-width:1160px;margin:18px auto;padding:12px}
-.panel{background:linear-gradient(180deg,#071427,#031026);border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(1,6,12,0.6)}
-#gameArea{width:980px;height:540px;margin:14px auto;border-radius:12px;position:relative;overflow:hidden;background:linear-gradient(180deg,#123,#032)}
-.river{position:absolute;left:0;right:0;top:50%;height:100px;margin-top:-50px;background:linear-gradient(180deg,#06b6d4,#0284c7);opacity:0.12}
-.bridge{position:absolute;width:150px;height:44px;border-radius:10px;background:rgba(255,255,255,0.06);top:50%;transform:translateY(-50%)}
-.bridge.left{left:140px}
-.bridge.right{right:140px}
-.lane-line{position:absolute;height:2px;left:0;right:0;background:rgba(255,255,255,0.04)}
-.lane-top{top:150px}
-.lane-bottom{top:390px}
-.tower{position:absolute;width:66px;height:66px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#09242b}
-.tower.player{background:linear-gradient(180deg,#a7f3d0,#34d399);border:3px solid rgba(255,255,255,0.06)}
-.tower.enemy{background:linear-gradient(180deg,#fecaca,#fb7185);border:3px solid rgba(255,255,255,0.06)}
-.tower .tag{position:absolute;top:6px;left:8px;font-size:11px;color:rgba(0,0,0,0.6)}
-.tower .hpbar{position:absolute;left:6px;right:6px;bottom:-12px;height:8px;border-radius:8px;background:rgba(0,0,0,0.4)}
-.tower .hpbar > i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#16a34a,#86efac)}
-.unit{position:absolute;display:flex;align-items:center;justify-content:center;color:#062023;font-weight:800;box-shadow:0 6px 12px rgba(0,0,0,0.6)}
-.unit.tank{width:48px;height:48px;border-radius:12px}
-.unit.melee{width:30px;height:30px;border-radius:999px}
-.unit.ranged{width:28px;height:28px;border-radius:6px}
-.unit .hpnum{position:absolute;top:-14px;font-size:11px;color:#e6eef6}
-.friendly{background:var(--friendly)}
-.enemy{background:var(--enemy)}
-.projectile{position:absolute;width:8px;height:8px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,0.6)}
-.projectile.arrow{width:6px;height:6px;border-radius:2px}
-.ui-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-.hand{display:flex;gap:10px}
-.card{width:120px;padding:10px;border-radius:12px;background:linear-gradient(180deg,#071021,#0c1626);cursor:pointer;border:1px solid rgba(255,255,255,0.03);text-align:center}
-.card.disabled{opacity:0.45;filter:grayscale(0.2);cursor:not-allowed}
-.card .cost{margin-top:6px;font-weight:900;padding:6px;border-radius:8px;background:rgba(255,255,255,0.02);display:inline-block}
-.elixir{display:flex;flex-direction:column;gap:6px;align-items:center}
-.elbar{width:240px;height:14px;border-radius:999px;background:rgba(255,255,255,0.04);overflow:hidden}
-.elbar > i{height:100%;background:linear-gradient(90deg,#06b6d4,#06b6d4)}
-.controls{display:flex;gap:8px}
-button{background:#071021;color:#e6eef6;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
-.drop-ind{position:absolute;width:42px;height:42px;border-radius:8px;border:2px dashed rgba(255,255,255,0.12);pointer-events:none;display:flex;align-items:center;justify-content:center}
-.banner{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(2,6,23,0.8);padding:20px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:10px;z-index:999}
-.small{font-size:13px;color:#93c5fd}
+    #score {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 32px;
+        font-weight: bold;
+    }
+
+    #hoop {
+        position: absolute;
+        top: 120px;
+        right: 80px;
+        width: 120px;
+        height: 10px;
+        border-bottom: 6px solid orange;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        transform: perspective(80px) rotateX(40deg);
+    }
+
+    #ball {
+        position: absolute;
+        bottom: 40px;
+        left: 50px;
+        width: 70px;
+        height: 70px;
+        background: #ff8c00;
+        border-radius: 50%;
+        box-shadow: inset -10px -10px 0 rgba(0, 0, 0, 0.3);
+        touch-action: none;
+    }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="panel">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2 style="margin:0">Clash Royale — Lite (All features)</h2>
-      <div class="small">Single HTML file • Open in browser</div>
-    </div>
 
-    <div id="gameArea">
-      <div class="lane-line lane-top"></div>
-      <div class="lane-line lane-bottom"></div>
-      <div class="river"></div>
-      <div class="bridge left"></div>
-      <div class="bridge right"></div>
-      <div id="dropIndicator" class="drop-ind" style="display:none"></div>
-    </div>
-
-    <div class="ui-bottom" style="margin-top:12px">
-      <div style="display:flex;gap:12px;align-items:center">
-        <div class="elixir">
-          <div id="elVal" style="font-weight:800">5</div>
-          <div class="elbar"><i id="elBar" style="width:50%"></i></div>
-        </div>
-        <div class="small">Click/Drag a card → place on your half (below river)</div>
-      </div>
-
-      <div class="hand" id="hand"></div>
-
-      <div class="controls">
-        <button id="restart">Restart</button>
-        <button id="speed">2x</button>
-      </div>
-    </div>
-  </div>
-</div>
+<div id="score">Score: 0</div>
+<div id="hoop"></div>
+<div id="ball"></div>
 
 <script>
-/* ======= Engine overview =======
-- Single Game object holds state
-- Units: move, target, attack
-- Projectiles: created by ranged units and travel
-- Drag-to-place with preview: user drags card onto arena; ghost shows allowed zone
-- Card rotation: 4 in hand + next queue
-- AI: plays defensively/offensively, chooses lane and reacts
-- Pathing: units aim for bridges x positions when crossing river
-================================= */
+let ball = document.getElementById("ball");
+let hoop = document.getElementById("hoop");
+let scoreDisplay = document.getElementById("score");
 
-const AREA = document.getElementById('gameArea');
-const HAND = document.getElementById('hand');
-const DROP = document.getElementById('dropIndicator');
-const ELVAL = document.getElementById('elVal');
-const ELBAR = document.getElementById('elBar');
-const RESTART = document.getElementById('restart');
-const SPEED = document.getElementById('speed');
+let startX, startY, isDragging = false;
+let velocityX = 0, velocityY = 0;
+let gravity = 0.5;
+let score = 0;
 
-const W = AREA.clientWidth, H = AREA.clientHeight;
-const RIVER_TOP = H/2 - 50, RIVER_BOTTOM = H/2 + 50;
-const BRIDGE_LEFT_X = 140 + 75, BRIDGE_RIGHT_X = W - (140 + 75); // center positions
-
-const MAX_ELIXIR = 10; const EL_REGEN = 1.0;
-let timeScale = 1;
-
-// Unit definitions
-const UNIT_DEFS = {
-  'footman': {name:'Footman', cost:1, hp:160, dmg:28, speed:80, range:18, radius:12, role:'melee'},
-  'archer':  {name:'Archer',  cost:2, hp:100, dmg:22, speed:58, range:180, radius:10, role:'ranged', proj:'arrow', projSpeed:420},
-  'giant':   {name:'Giant',   cost:5, hp:800, dmg:60, speed:38, range:18, radius:18, role:'tank'}
-};
-
-let nextId = 1;
-
-function id(){return nextId++}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function dist(a,b){return Math.hypot(a.x-b.x, a.y-b.y)}
-
-/* ======= DOM helpers ======= */
-function makeTowerNode(id, side, tag){ const el = document.createElement('div'); el.className='tower '+(side==='player'?'player':'enemy'); el.id=id; el.innerHTML = `<div class="tag">${tag}</div><div class="hpbar"><i style="width:100%"></i></div>`; AREA.appendChild(el); return el }
-function makeUnitNode(u){ const el = document.createElement('div'); el.className='unit '+u.roleClass+' '+(u.owner==='player'?'friendly':'enemy'); el.id = u.domId; el.innerHTML = `<div style="pointer-events:none">${u.short}</div><div class="hpnum">${Math.round(u.hp)}</div>`; AREA.appendChild(el); return el }
-function makeProjectileNode(p){ const el = document.createElement('div'); el.className='projectile '+(p.style||''); el.id = p.domId; AREA.appendChild(el); return el }
-
-/* ======= Game class ======= */
-class Game{
-  constructor(){ this.reset(); }
-  reset(){
-    // cleanup
-    AREA.querySelectorAll('.tower,.unit,.projectile,.banner').forEach(n=>n.remove());
-    // state
-    this.time = 0; this.last = performance.now();
-    this.elixir = 5; this.enemyElixir = 5;
-    this.hand = []; this.deck = []; this.nextQueue = [];
-    // simple deck building
-    this.buildDeck();
-    this.units = []; this.projectiles = [];
-    this.towers = { player:{}, enemy:{} };
-    // create towers positions
-    this.towers.player.left = {hp:900,x:40,y:H-110,kind:'L'};
-    this.towers.player.king = {hp:1400,x:120,y:H/2,kind:'K'};
-    this.towers.player.right = {hp:900,x:200,y:H-110,kind:'R'};
-    this.towers.enemy.left = {hp:900,x:W-40,y:110,kind:'L'};
-    this.towers.enemy.king = {hp:1400,x:W-120,y:H/2,kind:'K'};
-    this.towers.enemy.right = {hp:900,x:W-200,y:110,kind:'R'};
-    // create tower nodes
-    for(const s of ['player','enemy']){
-      for(const k of Object.keys(this.towers[s])){
-        const t = this.towers[s][k]; t.node = makeTowerNode(`tower_${s}_${k}`, s, k); t.node.style.left = (t.x-33)+'px'; t.node.style.top = (t.y-33)+'px'; this.updateTowerHp(s,k);
-      }
-    }
-    this.selectedCard = null; this.dragging = false; this.previewNode = null;
-    this.aiTimer = 0; this.gameOver = false; this.winner = null;
-    this.updateHandUI(); this.updateElixirUI();
-  }
-
-  buildDeck(){
-    // simple deck with repetition; shuffle
-    const base = ['footman','archer','footman','giant','archer','footman','archer','footman'];
-    this.deck = base.slice(); this.shuffle(this.deck);
-    this.hand = this.deck.splice(0,4);
-    this.nextQueue = this.deck.slice(0,3);
-  }
-  shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } }
-
-  updateHandUI(){ HAND.innerHTML=''; this.hand.forEach((k,idx)=>{
-    const d=UNIT_DEFS[k]; const card=document.createElement('div'); card.className='card'; card.dataset.type=k; card.innerHTML=`<div style="font-weight:900">${d.name}</div><div class="cost">${d.cost}</div>`;
-    if (this.elixir < d.cost) card.classList.add('disabled');
-    // drag and click handlers
-    card.addEventListener('mousedown', (e)=>this.startDrag(e,k,card));
-    card.addEventListener('touchstart', (e)=>this.startDrag(e,k,card), {passive:true});
-    HAND.appendChild(card);
-  });
-  // show next queue as small badges
-  const q=document.createElement('div'); q.style.minWidth='140px'; q.style.color='#9fbef9'; q.style.fontSize='12px'; q.innerHTML = '<div style="font-weight:700;margin-bottom:6px">Next</div>'+this.nextQueue.map(x=>UNIT_DEFS[x].name[0]).join(' ');
-  HAND.appendChild(q);
-  }
-
-  startDrag(e,type,cardNode){
-    if (this.gameOver) return; const def=UNIT_DEFS[type]; if(this.elixir < def.cost) return;
-    e.preventDefault(); this.selectedCard=type; this.dragging=true; this.dragNode=cardNode;
-    // create preview node
-    this.previewNode = document.createElement('div'); this.previewNode.className='unit '+(def.role==='tank'?'tank':(def.role==='melee'?'melee':'ranged'))+' friendly'; this.previewNode.style.opacity=0.6; this.previewNode.style.pointerEvents='none'; this.previewNode.innerHTML = `<div style="pointer-events:none">${def.name[0]}</div>`; AREA.appendChild(this.previewNode);
-  }
-
-  endDrag(x,y){
-    if (!this.dragging) return; this.dragging=false; if (this.previewNode){ this.previewNode.remove(); this.previewNode=null }
-    // validate drop: must be on player's half (y > H/2) and not inside enemy area
-    if (y <= H/2) return; // invalid
-    // spend elixir and spawn unit
-    const def=UNIT_DEFS[this.selectedCard]; if (this.elixir < def.cost) return;
-    this.elixir -= def.cost; this.updateElixirUI();
-    // spawn
-    this.spawnUnit('player', this.selectedCard, x, y);
-    // replace card: simple rotate from deck
-    const idx=this.hand.indexOf(this.selectedCard); if (idx>=0){ this.hand[idx]=this.nextQueue.shift() || this.deck.shift() || this.randomCard(); this.nextQueue.push(this.deck.shift() || this.randomCard()); }
-    this.updateHandUI();
-    this.selectedCard=null;
-  }
-
-  randomCard(){ const keys=Object.keys(UNIT_DEFS); return keys[Math.floor(Math.random()*keys.length)]; }
-
-  spawnUnit(owner,type,x,y){ const def=UNIT_DEFS[type]; const u={id:id(),owner,type,x,y,hp:def.hp,maxHp:def.hp,dmg:def.dmg,speed:def.speed,range:def.range,radius:def.radius,short:def.name[0],roleClass: def.role==='tank'?'tank':(def.role==='melee'?'melee':'ranged'),domId:'u_'+id(),target:null,lane:(y<H/2?'top':'bottom')}; u.node=makeUnitNode(u); this.units.push(u); return u }
-
-  spawnProjectile(fromX,fromY,toX,toY,props){ const p={id:id(),x:fromX,y:fromY,toX,toY,dx:toX-fromX,dy:toY-fromY,speed:props.speed||300,dmg:props.dmg||10,domId:'p_'+id(),style:props.style||''}; p.node=makeProjectileNode(p); this.projectiles.push(p); return p }
-
-  updateTowerHp(side,k){ const t=this.towers[side][k]; const pct=clamp(t.hp/(k==='king'?1400:900),0,1); const bar=t.node.querySelector('.hpbar>i'); bar.style.width=Math.round(pct*100)+'%'; }
-
-  aiBehavior(dt){
-    if (this.gameOver) return;
-    this.aiTimer += dt;
-    // reactive: if player's unit near enemy tower, spawn defender
-    if (this.aiTimer > 1.1){ this.aiTimer = 0;
-      // simple heuristics
-      // if enemy low elixir, opportunistic attack
-      // pick affordable card and spawn near its side
-      const affordable = this.nextQueue.concat(this.deck).filter(k=>UNIT_DEFS[k].cost <= Math.floor(this.enemyElixir));
-      if (affordable.length){ const pick = affordable[Math.floor(Math.random()*affordable.length)]; this.enemyElixir -= UNIT_DEFS[pick].cost; const lane = Math.random()<0.5?'top':'bottom'; const x = (lane==='top')? (W-120 + (Math.random()*40-20)) : (W-120 + (Math.random()*40-20)); const y = lane==='top' ? (H/2 - 80 + Math.random()*40) : (H/2 - 160 + Math.random()*40); this.spawnUnit('enemy', pick, x, y); }
-    }
-  }
-
-  step(dt){ if (this.gameOver) return; this.time += dt; this.elixir = clamp(this.elixir + EL_REGEN*dt, 0, MAX_ELIXIR); this.enemyElixir = clamp(this.enemyElixir + EL_REGEN*dt, 0, MAX_ELIXIR);
-    this.aiBehavior(dt);
-    // units AI: find targets and move
-    for (const u of this.units){ if (u.hp<=0) continue; // find nearest enemy unit in same lane
-      const enemies = this.units.filter(x=>x.owner!==u.owner && x.lane===u.lane);
-      let targetUnit = null; let td = 1e9;
-      for (const e of enemies){ const d=dist(u,e); if (d<td){ td=d; targetUnit=e; } }
-      if (targetUnit && td <= u.range + targetUnit.radius + 8){ // attack
-        targetUnit.hp -= u.dmg*dt*timeScale; if (targetUnit.hp<=0){}
-      } else if (targetUnit){ // move toward unit
-        const dx = (targetUnit.x - u.x); const dy = (targetUnit.y - u.y); const len = Math.hypot(dx,dy)||1; u.x += (dx/len) * u.speed * dt * timeScale; u.y += (dy/len) * u.speed * dt * timeScale;
-      } else {
-        // no unit target: move toward enemy towers using bridges x
-        const preferredBridgeX = (u.lane==='top') ? ( (u.owner==='player') ? BRIDGE_RIGHT_X : BRIDGE_LEFT_X ) : ( (u.owner==='player') ? BRIDGE_RIGHT_X : BRIDGE_LEFT_X );
-        const targetTower = (u.owner==='player') ? this.towers.enemy.king : this.towers.player.king;
-        // if before river, aim for bridge X, then cross
-        if ((u.owner==='player' && u.y > RIVER_BOTTOM) || (u.owner==='enemy' && u.y < RIVER_TOP)){
-          // approach bridge x then head forward
-          const dx = preferredBridgeX - u.x; const dy = (u.owner==='player'? RIVER_BOTTOM+20 : RIVER_TOP-20) - u.y; const len=Math.hypot(dx,dy)||1; u.x += (dx/len)*u.speed*dt*timeScale; u.y += (dy/len)*u.speed*dt*timeScale;
-        } else {
-          // head toward king tower
-          const dx = targetTower.x - u.x; const dy = targetTower.y - u.y; const len=Math.hypot(dx,dy)||1; u.x += (dx/len)*u.speed*dt*timeScale; u.y += (dy/len)*u.speed*dt*timeScale;
-        }
-      }
-      // ranged: spawn projectile when in range and cooldown
-      const def = UNIT_DEFS[u.type]; if (def.role==='ranged'){
-        u._atkTimer = (u._atkTimer||0) + dt*timeScale; if (u._atkTimer > 0.9){ // attack speed simple
-          // find first enemy in range
-          const targets = this.units.filter(x=>x.owner!==u.owner && dist(u,x) <= def.range + x.radius + 6);
-          if (targets.length){ const t = targets[0]; this.spawnProjectile(u.x, u.y, t.x, t.y, {speed:def.projSpeed, dmg:u.dmg, style:'arrow'}); u._atkTimer = 0; }
-        }
-      }
-    }
-
-    // projectiles move
-    for (let i=this.projectiles.length-1;i>=0;i--){ const p=this.projectiles[i]; const dx=p.toX - p.x; const dy=p.toY - p.y; const len=Math.hypot(dx,dy)||1; const move = (p.speed * dt * timeScale); if (move >= len){ // impact
-        // find a unit at location within small radius
-        for (const u of this.units){ if (u.owner !== (p.owner||'player') && Math.hypot(u.x - p.toX, u.y - p.toY) < 20){ u.hp -= p.dmg * timeScale; } }
-        if (p.node) p.node.remove(); this.projectiles.splice(i,1);
-      } else { p.x += (dx/len)*move; p.y += (dy/len)*move; if (p.node){ p.node.style.left = (p.x-4)+'px'; p.node.style.top = (p.y-4)+'px'; } }
-    }
-
-    // collisions with towers
-    for (const u of this.units){ if (u.hp<=0) continue; const enemySide = (u.owner==='player')? this.towers.enemy : this.towers.player; for (const k of Object.keys(enemySide)){ const t = enemySide[k]; const d = Math.hypot(u.x - t.x, u.y - t.y); if (d <= u.range + 22){ // attack tower
-            t.hp -= u.dmg * dt * timeScale; this.updateTowerHp((u.owner==='player')?'enemy':'player', k); if (t.hp <= 0 && k==='king'){ this.endGame(u.owner); }
-        }
-    } }
-
-    // remove dead units
-    for (let i=this.units.length-1;i>=0;i--){ const u=this.units[i]; if (u.hp<=0){ if (u.node) u.node.remove(); this.units.splice(i,1); } }
-
-    // update DOM positions
-    for (const u of this.units){ if (!u.node) u.node = makeUnitNode(u); u.node.style.left = (u.x - (u.roleClass==='tank'?24:(u.roleClass==='melee'?15:14)))+'px'; u.node.style.top = (u.y - (u.roleClass==='tank'?24:(u.roleClass==='melee'?15:14)))+'px'; const hpEl = u.node.querySelector('.hpnum'); if (hpEl) hpEl.innerText = Math.max(0,Math.round(u.hp)); }
-
-    // update projectiles DOM positions (ensure nodes exist)
-    for (const p of this.projectiles){ if (!p.node) p.node = makeProjectileNode(p); p.node.style.left = (p.x-4)+'px'; p.node.style.top = (p.y-4)+'px'; p.node.style.background = '#ffd'; }
-
-    this.updateElixirUI();
-  }
-
-  spawnProjectile(fromX,fromY,toX,toY,props){ const p={id:id(),x:fromX,y:fromY,toX,toY,speed:props.speed||300,dmg:props.dmg||10,domId:'p_'+id(),owner:props.owner||'enemy'}; p.node=makeProjectileNode(p); this.projectiles.push(p); return p }
-
-  updateElixirUI(){ ELVAL.innerText = Math.floor(this.elixir); ELBAR.style.width = Math.round((this.elixir/MAX_ELIXIR)*100)+'%'; }
-
-  endGame(winner){ this.gameOver=true; this.winner = winner; this.showBanner(`${winner==='player'?'You Win!':'You Lose'}`); }
-
-  showBanner(text){ const b=document.createElement('div'); b.className='banner'; b.innerHTML = `<div style="font-size:24px;font-weight:900">${text}</div><div style="display:flex;gap:8px"><button id="bannerRestart">Play Again</button><button id="bannerClose">Close</button></div>`; AREA.appendChild(b); document.getElementById('bannerRestart').onclick=()=>{ this.reset(); b.remove(); }; document.getElementById('bannerClose').onclick=()=>b.remove(); }
+function resetBall() {
+    ball.style.left = "50px";
+    ball.style.bottom = "40px";
+    velocityX = 0;
+    velocityY = 0;
 }
 
-/* ======= Input management: drag / drop / click ======= */
-let game = new Game();
+function startDrag(e) {
+    isDragging = true;
+    let rect = ball.getBoundingClientRect();
+    startX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    startY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+}
 
-AREA.addEventListener('mousemove', (e)=>{
-  if (game.dragging){ const rect=AREA.getBoundingClientRect(); const x=e.clientX-rect.left, y=e.clientY-rect.top; if (game.previewNode){ game.previewNode.style.left=(x-20)+'px'; game.previewNode.style.top=(y-20)+'px'; }
-    DROP.style.display='flex'; DROP.style.left=(x-21)+'px'; DROP.style.top=(y-21)+'px'; // show allowed zone highlight
-  }
-});
-AREA.addEventListener('mouseup', (e)=>{
-  if (game.dragging){ const rect=AREA.getBoundingClientRect(); const x=e.clientX-rect.left, y=e.clientY-rect.top; game.endDrag(x,y); DROP.style.display='none'; }
-});
-AREA.addEventListener('mouseleave', ()=>{ if (game.dragging){ DROP.style.display='none'; } });
+function drag(e) {
+    if (!isDragging) return;
 
-// touch support
-AREA.addEventListener('touchmove',(ev)=>{ if (game.dragging){ const t=ev.touches[0]; const rect=AREA.getBoundingClientRect(); const x=t.clientX-rect.left, y=t.clientY-rect.top; if (game.previewNode){ game.previewNode.style.left=(x-20)+'px'; game.previewNode.style.top=(y-20)+'px'; } DROP.style.display='flex'; DROP.style.left=(x-21)+'px'; DROP.style.top=(y-21)+'px'; } },{passive:true});
-AREA.addEventListener('touchend',(ev)=>{ if (game.dragging){ // use last touch point
-  const rect=AREA.getBoundingClientRect(); const x=(ev.changedTouches[0].clientX-rect.left), y=(ev.changedTouches[0].clientY-rect.top); game.endDrag(x,y); DROP.style.display='none'; } });
+    let x = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
+    let y = (e.touches ? e.touches[0].clientY : e.clientY) - startY;
 
-/* ======= Controls ======= */
-RESTART.onclick = ()=>{ game.reset(); };
-SPEED.onclick = ()=>{ timeScale = timeScale===1?2:1; SPEED.innerText = timeScale===1? '2x' : '1x'; };
+    ball.style.left = x + "px";
+    ball.style.top = y + "px";
+}
 
-/* ======= Main loop ======= */
-let last = performance.now(); function loop(){ const now = performance.now(); let dt = (now-last)/1000; last = now; dt *= timeScale; game.step(dt); requestAnimationFrame(loop); }
-requestAnimationFrame(loop);
+function release(e) {
+    if (!isDragging) return;
+    isDragging = false;
 
-/* ======= Initial UI draw ======= */
-game.updateHandUI(); game.updateElixirUI();
+    let vx = -(e.touches ? e.changedTouches[0].movementX : e.movementX) || -10;
+    let vy = -(e.touches ? e.changedTouches[0].movementY : e.movementY) || -10;
 
-// expose for debugging
-window._game = game;
+    velocityX = vx;
+    velocityY = vy;
+}
 
+function checkScore() {
+    let ballRect = ball.getBoundingClientRect();
+    let hoopRect = hoop.getBoundingClientRect();
+
+    if (ballRect.right > hoopRect.left &&
+        ballRect.left < hoopRect.right &&
+        ballRect.top < hoopRect.bottom &&
+        ballRect.bottom > hoopRect.top) {
+
+        score++;
+        scoreDisplay.innerText = "Score: " + score;
+        resetBall();
+    }
+}
+
+function physics() {
+    if (!isDragging) {
+        let rect = ball.getBoundingClientRect();
+
+        velocityY += gravity;
+
+        ball.style.left = rect.left + velocityX + "px";
+        ball.style.top = rect.top + velocityY + "px";
+
+        if (parseFloat(ball.style.top) > window.innerHeight - 80) {
+            resetBall();
+        }
+
+        checkScore();
+    }
+
+    requestAnimationFrame(physics);
+}
+
+ball.addEventListener("mousedown", startDrag);
+ball.addEventListener("mousemove", drag);
+document.addEventListener("mouseup", release);
+
+ball.addEventListener("touchstart", startDrag);
+ball.addEventListener("touchmove", drag);
+document.addEventListener("touchend", release);
+
+physics();
 </script>
+
 </body>
 </html>
