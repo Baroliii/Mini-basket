@@ -1,146 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>Mini Basketball Game</title>
-<style>
-    body {
-        margin: 0;
-        background: #222;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-        color: white;
-        text-align: center;
-    }
-
-    #score {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        font-size: 32px;
-        font-weight: bold;
-    }
-
-    #hoop {
-        position: absolute;
-        top: 120px;
-        right: 80px;
-        width: 120px;
-        height: 10px;
-        border-bottom: 6px solid orange;
-        border-left: 6px solid transparent;
-        border-right: 6px solid transparent;
-        transform: perspective(80px) rotateX(40deg);
-    }
-
-    #ball {
-        position: absolute;
-        bottom: 40px;
-        left: 50px;
-        width: 70px;
-        height: 70px;
-        background: #ff8c00;
-        border-radius: 50%;
-        box-shadow: inset -10px -10px 0 rgba(0, 0, 0, 0.3);
-        touch-action: none;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>Ultimate Basketball Shootout</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="score">Score: 0</div>
-<div id="hoop"></div>
-<div id="ball"></div>
+<div id="menu">
+    <h1>🏀 Basketball Shootout</h1>
 
-<script>
-let ball = document.getElementById("ball");
-let hoop = document.getElementById("hoop");
-let scoreDisplay = document.getElementById("score");
+    <label>Choose Ball Skin:</label>
+    <select id="ballSkin">
+        <option value="orange">Classic Orange</option>
+        <option value="blue">Blue Neon</option>
+        <option value="gold">Golden Ball</option>
+        <option value="fire">🔥 Fireball</option>
+    </select>
 
-let startX, startY, isDragging = false;
-let velocityX = 0, velocityY = 0;
-let gravity = 0.5;
-let score = 0;
+    <label>Difficulty:</label>
+    <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="normal" selected>Normal</option>
+        <option value="hard">Hard</option>
+    </select>
 
-function resetBall() {
-    ball.style.left = "50px";
-    ball.style.bottom = "40px";
-    velocityX = 0;
-    velocityY = 0;
-}
+    <button onclick="startGame()">Start Game</button>
 
-function startDrag(e) {
-    isDragging = true;
-    let rect = ball.getBoundingClientRect();
-    startX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    startY = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-}
+    <button onclick="openFullscreen()">Fullscreen</button>
+</div>
 
-function drag(e) {
-    if (!isDragging) return;
+<div id="game">
+    <div id="scoreUI">Score: 0</div>
+    <div id="highscoreUI">High Score: 0</div>
+    <div id="player"></div>
+    <div id="hoop"></div>
+    <div id="ball"></div>
+</div>
 
-    let x = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
-    let y = (e.touches ? e.touches[0].clientY : e.clientY) - startY;
-
-    ball.style.left = x + "px";
-    ball.style.top = y + "px";
-}
-
-function release(e) {
-    if (!isDragging) return;
-    isDragging = false;
-
-    let vx = -(e.touches ? e.changedTouches[0].movementX : e.movementX) || -10;
-    let vy = -(e.touches ? e.changedTouches[0].movementY : e.movementY) || -10;
-
-    velocityX = vx;
-    velocityY = vy;
-}
-
-function checkScore() {
-    let ballRect = ball.getBoundingClientRect();
-    let hoopRect = hoop.getBoundingClientRect();
-
-    if (ballRect.right > hoopRect.left &&
-        ballRect.left < hoopRect.right &&
-        ballRect.top < hoopRect.bottom &&
-        ballRect.bottom > hoopRect.top) {
-
-        score++;
-        scoreDisplay.innerText = "Score: " + score;
-        resetBall();
-    }
-}
-
-function physics() {
-    if (!isDragging) {
-        let rect = ball.getBoundingClientRect();
-
-        velocityY += gravity;
-
-        ball.style.left = rect.left + velocityX + "px";
-        ball.style.top = rect.top + velocityY + "px";
-
-        if (parseFloat(ball.style.top) > window.innerHeight - 80) {
-            resetBall();
-        }
-
-        checkScore();
-    }
-
-    requestAnimationFrame(physics);
-}
-
-ball.addEventListener("mousedown", startDrag);
-ball.addEventListener("mousemove", drag);
-document.addEventListener("mouseup", release);
-
-ball.addEventListener("touchstart", startDrag);
-ball.addEventListener("touchmove", drag);
-document.addEventListener("touchend", release);
-
-physics();
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
